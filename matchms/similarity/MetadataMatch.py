@@ -164,8 +164,8 @@ class MetadataMatch(BaseSimilarity):
                 rows.extend(idx)
                 cols.extend([i] * len(idx))
 
-            rows = np.array(rows)
-            cols = np.array(cols)
+            rows = np.array(rows, dtype=int)
+            cols = np.array(cols, dtype=int)
             scores = np.ones(len(rows))
         else:
             if is_symmetric:

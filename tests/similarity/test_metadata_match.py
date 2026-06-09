@@ -90,3 +90,16 @@ def test_metadata_match_invalid_array_type(spectra):
 
     with pytest.raises(ValueError, match="array_type must be 'numpy' or 'sparse'."):
         calculate_scores(references, queries, similarity_score, array_type = "scipy")
+
+
+def test_metadata_match_no_matches_does_not_crash(spectra):
+    """Regression test: equal_match matrix() must not raise IndexError when no pairs match.
+
+    Empty match lists previously became float64 index arrays, which cannot be used to index a
+    numpy array. This is a common case (e.g. comparing spectra from different instruments).
+    """
+    similarity_score = MetadataMatch(field="instrument_type")
+    # orbitrap vs qtof -> no matches at all
+    scores = similarity_score.matrix([spectra[0]], [spectra[1]])
+    assert scores.shape == (1, 1)
+    assert np.all(scores == 0), "Expected zero matches"
