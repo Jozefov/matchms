@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## unpublished
+### Fixed
+- Fixed `PrecursorMzMatch.pair()` returning results inconsistent with `matrix()` in ppm mode (the 1e6 ppm conversion factor was missing in `pair()`).
 
 ## [0.31.0] - 2025-10-06
 ### Added

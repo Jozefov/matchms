@@ -61,3 +61,18 @@ def test_precursormz_match_array_symmetric_parameterized(precursor_mz, tolerance
 
     assert np.all(scores == scores2), "Expected identical scores"
     assert np.all(scores == np.array(expected)), "Expected different scores"
+
+
+def test_precursormz_match_ppm_pair_matrix_consistency():
+    """Regression test: pair() and matrix() must agree in ppm mode.
+
+    Previously pair() omitted the 1e6 ppm conversion factor that matrix() applies, so the two
+    methods returned contradictory results for the same spectra in ppm mode.
+    """
+    # Precursor m/z values ~10 ppm apart, evaluated at a 5 ppm tolerance: should NOT match.
+    s0, s1 = spectra_factory('precursor_mz', [1000.0, 1000.01])
+    similarity_score = PrecursorMzMatch(tolerance=5.0, tolerance_type="ppm")
+    pair_score = bool(similarity_score.pair(s0, s1))
+    matrix_score = bool(similarity_score.matrix([s0], [s1])[0, 0])
+    assert pair_score == matrix_score, "pair() and matrix() disagree in ppm mode"
+    assert pair_score is False, "~10 ppm difference should not match at 5 ppm tolerance"
