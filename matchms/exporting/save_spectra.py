@@ -45,9 +45,10 @@ def save_spectra(
         spectra = [spectra]
 
     if len(spectra) == 0:
-        logger.warning("No spectra to save. File will be empty.")
-        with open(file, "w", encoding="utf-8"):
-            pass
+        logger.warning("No spectra to save.")
+        if not append:
+            with open(file, "w", encoding="utf-8"):
+                pass
         return
 
     if ftype == "json":

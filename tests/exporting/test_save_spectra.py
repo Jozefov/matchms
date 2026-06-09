@@ -121,3 +121,18 @@ def test_save_as_pickled_file_none_spectra(file_name):
         spectrum_list = [None]
         with pytest.raises(TypeError, match="Expected list of spectra"):
             save_as_pickled_file(spectrum_list, filename)
+
+
+def test_save_spectra_empty_append_preserves_file():
+    """Regression test: save_spectra([], file, append=True) must not truncate an existing file."""
+    spectrum_list = load_test_spectra_file()
+    with tempfile.TemporaryDirectory() as temp_dir:
+        filename = os.path.join(temp_dir, "spectra.mgf")
+        save_spectra(spectrum_list, filename)
+        size_before = os.path.getsize(filename)
+        assert size_before > 0
+
+        # Nothing to add: appending an empty list must be a no-op, not truncate the file.
+        save_spectra([], filename, append=True)
+        assert os.path.getsize(filename) == size_before, "Empty append truncated the existing file"
+        assert len(list(load_spectra(filename))) == len(spectrum_list)
